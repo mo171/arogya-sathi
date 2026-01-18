@@ -5,10 +5,7 @@ from lib.supabase_client import supabase
 
 def analyze_health_text(transcript: str, allergies: str):
     """
-    Analyzes health text using a high-accuracy RAG approach:
-    1. Extract a precise search query from the transcript.
-    2. Retrieve community solutions from Supabase.
-    3. Generate the final analysis using a structured professional prompt.
+    Analyzes health text using LLM structured analysis.
     """
     try:
         full_prompt = f"""
@@ -32,14 +29,16 @@ TASK:
         analysis = get_structured_analysis(
             transcript, full_prompt, HealthAnalysisSchema
         )
+        print(f" first fun {analysis} ")
 
-        solutions_query = (
-            supabase.table("community_solutions")
-            .select("*")
-            .ilike("problem_name", f"%{analysis.main_problem}%")
-            .limit(3)
-            .execute()
-        )
+        # Query remedies table for community solutions
+        # remedies_query = (
+        #     supabase.table("remedies")
+        #     .select("*")
+        #     .ilike("description", f"%{analysis.main_problem}%")
+        #     .limit(3)
+        #     .execute()
+        # )
 
         return {
             "main_problem": analysis.main_problem,
@@ -52,10 +51,11 @@ TASK:
             "required_specialization": analysis.required_specialization,
             "bot_recommendation": analysis.bot_recommendation,
             "response": analysis.response,
-            "community_solutions": solutions_query.data,
+            # "community_remedies": remedies_query.data,
         }
 
     except Exception as e:
+        print(f"Error in analyze_health_text: {e}")
         return {"error": str(e)}
 
 
@@ -88,25 +88,18 @@ def json_response(analysis: dict, doctors: list):
     """
     Formats the analysis and doctors into the final JSON structure requested by the user.
     """
-
-    print(doctors)
-    print(analysis.get("community_solutions"))
-    print(analysis.get("main_problem"))
-    print(analysis.get("cause_of_problem"))
-    print(analysis.get("preventive_measures"))
-    print(analysis.get("required_specialization"))
-    print(analysis.get("bot_recommendation"))
-    print(analysis.get("response"))
+    print(f" 2nd fun {analysis}")
+    # print(analysis.response)
     return {
         "main_problem": analysis.get("main_problem"),
         "cause_of_problem": analysis.get("cause_of_problem"),
         "preventive_measures": analysis.get("preventive_measures"),
         "bot_recommendation": analysis.get("bot_recommendation"),
         "response": analysis.get("response"),
-        "community_solution": [
-            sol.get("solution")
-            for sol in analysis.get("community_solutions", [])
-            if sol.get("solution")
-        ],
+        # "community_remedies": [
+        #     remedy.get("remedy_description")
+        #     for remedy in analysis.get("community_remedies", [])
+        #     if remedy.get("remedy_description")
+        # ],
         "call_to_action": {"recommended_doctors": doctors},
     }

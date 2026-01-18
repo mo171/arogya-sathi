@@ -72,11 +72,14 @@ export default function ChatSessionPage() {
         console.log("Audio uploaded to:", audioUrl);
 
         // Send to backend
-        await api.post(`/api/v1/sessions/${sessionId}`, {
+        const response = await api.post(`/api/v1/sessions/${sessionId}`, {
           audio_url: audioUrl,
         });
 
-        const { analysis, doctors } = response.data;
+        console.log("Backend response:", response.data);
+
+        const backendData = response.data;
+        const doctors = backendData.call_to_action?.recommended_doctors || [];
 
         // Create AI response with cards
         const aiResponse: Message = {
@@ -86,19 +89,27 @@ export default function ChatSessionPage() {
             {
               type: "problem",
               data: {
-                title: "Possible Diagnosis",
-                symptoms: analysis.symptoms || [],
-                severity: analysis.severity || "medium",
-                description: analysis.description || analysis.diagnosis || "",
+                title: backendData.main_problem || "Health Analysis",
+                symptoms: [], // Backend doesn't return symptoms array
+                severity: "medium",
+                description:
+                  backendData.response || backendData.cause_of_problem || "",
               },
             },
-            ...(analysis.home_remedies && analysis.home_remedies.length > 0
+            ...(backendData.preventive_measures &&
+            backendData.preventive_measures.length > 0
               ? [
                   {
                     type: "remedy" as const,
                     data: {
-                      title: "Home Remedies",
-                      remedies: analysis.home_remedies,
+                      title: "Preventive Measures",
+                      remedies: backendData.preventive_measures.map(
+                        (measure: string, index: number) => ({
+                          name: `Measure ${index + 1}`,
+                          description: measure,
+                          duration: "As needed",
+                        }),
+                      ),
                     },
                   },
                 ]
@@ -109,8 +120,15 @@ export default function ChatSessionPage() {
                     type: "doctor" as const,
                     data: {
                       suggestion:
+                        backendData.bot_recommendation ||
                         "If symptoms persist, please consult a doctor.",
-                      doctors: doctors,
+                      doctors: doctors.map((doc: any) => ({
+                        name: doc.name,
+                        specialty: doc.specialization,
+                        distance: "N/A", // Backend doesn't return distance
+                        rating: doc.rating || 0,
+                        available: "Contact for availability",
+                      })),
                     },
                   },
                 ]
