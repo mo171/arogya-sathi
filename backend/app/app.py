@@ -9,6 +9,7 @@
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from lib.supabase_client import supabase
 from dotenv import load_dotenv
 import os
@@ -19,10 +20,27 @@ from services.session_services import (
     recommend_doctors,
     json_response,
 )
+from pydantic import BaseModel
 
 # SETTING UP THE APP
 load_dotenv()
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
+
+
+class SessionRequest(BaseModel):
+    user_id: str
+
+class AudioPayload(BaseModel):
+    audio_url: str
 
 
 """
@@ -41,13 +59,11 @@ def supabase_test():
 
 # ENDPOINT- /api/v1/sessions/
 @app.post("/api/v1/sessions/new")
-def create_session(user_id: str):
+async def create_session(payload: SessionRequest):
+    data = {"user_id": payload.user_id}
     try:
-        if not user_id:
+        if not data["user_id"]:
             return {"error": "User ID is required", "status_code": 400}
-        data = {
-            "user_id": user_id,
-        }
 
         result = supabase.table("health_sessions").insert(data).execute()
         session_id = result.data[0]["id"]
@@ -59,13 +75,8 @@ def create_session(user_id: str):
 
 
 @app.post("/api/v1/sessions/{session_id}")
-def process_audio(session_id: str, audio_url: str, language_code: str):
-    # 1. download audio
-    audio_file_path = download_audio_from_url(audio_url)
-
-    # 2. transcribe audio
-    transcript = transcribe_audio(audio_file_path, language_code)
-
+async def process_audio(session_id: str, payload: AudioPayload):
+    audio_url = payload.audio_url
     session_res = (
         supabase.table("health_sessions")
         .select("user_id")
@@ -78,7 +89,7 @@ def process_audio(session_id: str, audio_url: str, language_code: str):
 
     user_res = (
         supabase.table("users")
-        .select("allergies", "location")
+        .select("allergies", "location", "preferred_language")
         .eq("id", user_id)
         .single()
         .execute()
@@ -86,6 +97,13 @@ def process_audio(session_id: str, audio_url: str, language_code: str):
 
     allergies = user_res.data["allergies"]
     location = user_res.data["location"]
+    language_code = user_res.data["preferred_language"]
+
+    # 1. download audio
+    audio_file_path = download_audio_from_url(audio_url)
+
+    # 2. transcribe audio
+    transcript = transcribe_audio(audio_file_path, language_code)
 
     # 3. analyze medical text
     analysis = analyze_health_text(transcript, allergies)

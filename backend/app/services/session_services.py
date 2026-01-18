@@ -59,18 +59,18 @@ TASK:
         return {"error": str(e)}
 
 
-def recommend_doctors(analysis: dict, location: str):
+def recommend_doctors(analysis: dict, location: dict):
     """
-    Searches Supabase for doctors based on location and specialization from analysis.
-    Returns top 3 doctors sorted by rating.
+    Searches Supabase for doctors based on JSON location & specialization.
     """
     try:
         specialization = analysis.get("required_specialization")
+        city = location.get("city")
 
         query = (
             supabase.table("doctors")
             .select("name, location, specialization, rating")
-            .eq("location", location)
+            .eq("location->>city", city)
             .ilike("specialization", f"%{specialization}%")
             .order("rating", desc=True)
             .limit(3)
@@ -80,7 +80,7 @@ def recommend_doctors(analysis: dict, location: str):
         return query.data
 
     except Exception as e:
-        print(f"Error recommending doctors: {e}")
+        print("Error recommending doctors:", e)
         return []
 
 
@@ -88,6 +88,15 @@ def json_response(analysis: dict, doctors: list):
     """
     Formats the analysis and doctors into the final JSON structure requested by the user.
     """
+
+    print(doctors)
+    print(analysis.get("community_solutions"))
+    print(analysis.get("main_problem"))
+    print(analysis.get("cause_of_problem"))
+    print(analysis.get("preventive_measures"))
+    print(analysis.get("required_specialization"))
+    print(analysis.get("bot_recommendation"))
+    print(analysis.get("response"))
     return {
         "main_problem": analysis.get("main_problem"),
         "cause_of_problem": analysis.get("cause_of_problem"),
