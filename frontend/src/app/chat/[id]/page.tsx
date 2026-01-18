@@ -35,6 +35,7 @@ export default function ChatSessionPage() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const audioRecorderRef = useRef<AudioRecorder | null>(null);
+  const isRequestInProgressRef = useRef(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -43,23 +44,27 @@ export default function ChatSessionPage() {
   }, [messages, isProcessing]);
 
   useEffect(() => {
-    // Initialize audio recorder
     audioRecorderRef.current = new AudioRecorder();
   }, []);
 
   const handleMicPress = async () => {
     if (!audioRecorderRef.current) return;
 
+    // Prevent duplicate requests
+    if (isRequestInProgressRef.current) {
+      console.log("Request already in progress, ignoring click");
+      return;
+    }
+
     try {
       if (isListening) {
         // Stop recording
         setIsListening(false);
         setIsProcessing(true);
+        isRequestInProgressRef.current = true;
 
-        // Get the audio blob
         const audioBlob = await audioRecorderRef.current.stopRecording();
 
-        // Add user message (placeholder)
         const userMessage: Message = {
           id: Date.now().toString(),
           type: "user",
@@ -67,11 +72,9 @@ export default function ChatSessionPage() {
         };
         setMessages((prev) => [...prev, userMessage]);
 
-        // Upload to Cloudinary
         const audioUrl = await uploadAudioToCloudinary(audioBlob);
         console.log("Audio uploaded to:", audioUrl);
 
-        // Send to backend
         const response = await api.post(`/api/v1/sessions/${sessionId}`, {
           audio_url: audioUrl,
         });
@@ -81,7 +84,6 @@ export default function ChatSessionPage() {
         const backendData = response.data;
         const doctors = backendData.call_to_action?.recommended_doctors || [];
 
-        // Create AI response with cards
         const aiResponse: Message = {
           id: (Date.now() + 1).toString(),
           type: "ai",
@@ -90,7 +92,7 @@ export default function ChatSessionPage() {
               type: "problem",
               data: {
                 title: backendData.main_problem || "Health Analysis",
-                symptoms: [], // Backend doesn't return symptoms array
+                symptoms: [],
                 severity: "medium",
                 description:
                   backendData.response || backendData.cause_of_problem || "",
@@ -125,7 +127,7 @@ export default function ChatSessionPage() {
                       doctors: doctors.map((doc: any) => ({
                         name: doc.name,
                         specialty: doc.specialization,
-                        distance: "N/A", // Backend doesn't return distance
+                        distance: "N/A",
                         rating: doc.rating || 0,
                         available: "Contact for availability",
                       })),
@@ -138,6 +140,8 @@ export default function ChatSessionPage() {
 
         setMessages((prev) => [...prev, aiResponse]);
         setError(null);
+        setIsProcessing(false);
+        isRequestInProgressRef.current = false;
       } else {
         // Start recording
         setIsListening(true);
@@ -152,14 +156,10 @@ export default function ChatSessionPage() {
       );
       setIsListening(false);
       setIsProcessing(false);
+      isRequestInProgressRef.current = false;
 
-      // Cancel recording if it was started
       if (audioRecorderRef.current) {
         audioRecorderRef.current.cancelRecording();
-      }
-    } finally {
-      if (!isListening) {
-        setIsProcessing(false);
       }
     }
   };
