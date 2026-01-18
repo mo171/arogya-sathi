@@ -41,7 +41,7 @@ def supabase_test():
 
 # ENDPOINT- /api/v1/sessions/
 @app.post("/api/v1/sessions/new")
-async def create_session(user_id: str):
+def create_session(user_id: str):
     try:
         if not user_id:
             return {"error": "User ID is required", "status_code": 400}
@@ -59,7 +59,7 @@ async def create_session(user_id: str):
 
 
 @app.post("/api/v1/sessions/{session_id}")
-async def process_audio(session_id: str, audio_url: str, language_code: str):
+def process_audio(session_id: str, audio_url: str, language_code: str):
     # 1. download audio
     audio_file_path = download_audio_from_url(audio_url)
 
