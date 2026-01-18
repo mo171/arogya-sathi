@@ -105,11 +105,11 @@ def json_response(analysis: dict, doctors: list):
         "tags": analysis.get("tags"),
         "community_remedies": [
             {
-                "name": remedy.get("remedy_name"),
-                "description": remedy.get("remedy_description"),
+                "name": remedy.get("name"),
+                "description": remedy.get("description"),
             }
             for remedy in analysis.get("community_remedies", [])
-            if remedy.get("remedy_name") and remedy.get("remedy_description")
+            if remedy.get("name") and remedy.get("description")
         ],
         "call_to_action": {"recommended_doctors": doctors},
     }
