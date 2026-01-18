@@ -65,12 +65,12 @@ def recommend_doctors(analysis: dict, location: dict):
     """
     try:
         specialization = analysis.get("required_specialization")
-        city = location.get("city")
+        pincode = location.get("pincode")
 
         query = (
             supabase.table("doctors")
             .select("name, location, specialization, rating")
-            .eq("location->>city", city)
+            .eq("location->>pincode", pincode)
             .ilike("specialization", f"%{specialization}%")
             .order("rating", desc=True)
             .limit(3)
