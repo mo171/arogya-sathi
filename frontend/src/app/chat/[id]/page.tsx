@@ -318,12 +318,21 @@ export default function ChatSessionPage() {
                         )}
 
                         {card.type === "remedy" && (
-                          <Card className="border-2 shadow-sm overflow-hidden">
+                          <Card
+                            className={`border-2 shadow-sm overflow-hidden ${card.data.title === "Suggested Home Remedies" ? "rem-g" : ""}`}
+                          >
                             <CardContent className="p-5 space-y-4">
                               <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <Leaf className="h-5 w-5 text-white" />
-                                </div>
+                                {card.data.title ===
+                                "Suggested Home Remedies" ? (
+                                  <div className="rem-icon-pill">
+                                    <Leaf className="h-6 w-6 text-white" />
+                                  </div>
+                                ) : (
+                                  <div className="w-9 h-9 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
+                                    <Leaf className="h-5 w-5 text-white" />
+                                  </div>
+                                )}
                                 <h3 className="font-medium text-lg">
                                   {card.data.title}
                                 </h3>
@@ -334,7 +343,7 @@ export default function ChatSessionPage() {
                                   (remedy: any, i: number) => (
                                     <div
                                       key={i}
-                                      className="bg-white rounded-xl p-4 border border-green-100 shadow-[0_2px_4px_rgba(0,0,0,0.02)]"
+                                      className={`rounded-xl p-4 border ${card.data.title === "Suggested Home Remedies" ? "rem-g-item" : "bg-white border-green-100 shadow-[0_2px_4px_rgba(0,0,0,0.02)]"}`}
                                     >
                                       <div className="flex items-start gap-3">
                                         <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -346,14 +355,19 @@ export default function ChatSessionPage() {
                                           <h4 className="font-bold text-gray-900 text-sm mb-1">
                                             {remedy.name}
                                           </h4>
-                                          <p className="text-gray-600 text-xs leading-relaxed">
+                                          <p
+                                            className={`text-gray-600 leading-relaxed ${card.data.title === "Suggested Home Remedies" ? "text-sm" : "text-xs"}`}
+                                          >
                                             {remedy.description}
                                           </p>
-                                          <div className="mt-2">
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
-                                              Duration: {remedy.duration}
-                                            </span>
-                                          </div>
+                                          {card.data.title !==
+                                            "Suggested Home Remedies" && (
+                                            <div className="mt-2">
+                                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                                                Duration: {remedy.duration}
+                                              </span>
+                                            </div>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
