@@ -116,6 +116,24 @@ export default function ChatSessionPage() {
                   },
                 ]
               : []),
+            ...(backendData.community_remedies &&
+            backendData.community_remedies.length > 0
+              ? [
+                  {
+                    type: "remedy" as const,
+                    data: {
+                      title: "Suggested Home Remedies",
+                      remedies: backendData.community_remedies.map(
+                        (remedy: any, index: number) => ({
+                          name: remedy.name,
+                          description: remedy.description,
+                          duration: "As recommended",
+                        }),
+                      ),
+                    },
+                  },
+                ]
+              : []),
             ...(doctors && doctors.length > 0
               ? [
                   {

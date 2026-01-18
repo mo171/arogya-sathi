@@ -23,6 +23,7 @@ TASK:
 2. Determine the correctly matching 'required_specialization' (e.g. Dermatologist, Cardiologist, ENT, General Physician) based on the problem.
 3. Provide a 'bot_recommendation' whether to go with home remedies or not (straight forward recommended/not recommended).
 4. Provide a final 'response' detailing what the patient should do and if they should meet a doctor.
+5. Extract relevant symptom/condition tags as a comma-separated list (e.g., 'cold,fever,headache,cough,sore throat'). Use common, simple tags that describe the symptoms or conditions mentioned.
 """
 
         # Final structured analysis call
@@ -31,14 +32,18 @@ TASK:
         )
         print(f" first fun {analysis} ")
 
-        # Query remedies table for community solutions
-        # remedies_query = (
-        #     supabase.table("remedies")
-        #     .select("*")
-        #     .ilike("description", f"%{analysis.main_problem}%")
-        #     .limit(3)
-        #     .execute()
-        # )
+        # Query remedies table using tags
+        tags_list = [
+            tag.strip().lower() for tag in analysis.tags.split(",") if tag.strip()
+        ]
+
+        remedies_query = (
+            supabase.table("remedies")
+            .select("*")
+            .contains("tags", tags_list)
+            .limit(3)
+            .execute()
+        )
 
         return {
             "main_problem": analysis.main_problem,
@@ -51,7 +56,8 @@ TASK:
             "required_specialization": analysis.required_specialization,
             "bot_recommendation": analysis.bot_recommendation,
             "response": analysis.response,
-            # "community_remedies": remedies_query.data,
+            "tags": tags_list,
+            "community_remedies": remedies_query.data,
         }
 
     except Exception as e:
@@ -96,10 +102,14 @@ def json_response(analysis: dict, doctors: list):
         "preventive_measures": analysis.get("preventive_measures"),
         "bot_recommendation": analysis.get("bot_recommendation"),
         "response": analysis.get("response"),
-        # "community_remedies": [
-        #     remedy.get("remedy_description")
-        #     for remedy in analysis.get("community_remedies", [])
-        #     if remedy.get("remedy_description")
-        # ],
+        "tags": analysis.get("tags"),
+        "community_remedies": [
+            {
+                "name": remedy.get("remedy_name"),
+                "description": remedy.get("remedy_description"),
+            }
+            for remedy in analysis.get("community_remedies", [])
+            if remedy.get("remedy_name") and remedy.get("remedy_description")
+        ],
         "call_to_action": {"recommended_doctors": doctors},
     }

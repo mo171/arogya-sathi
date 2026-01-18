@@ -20,3 +20,6 @@ class HealthAnalysisSchema(BaseModel):
     response: str = Field(
         description="Medical suggestion: whether to seek a doctor or if it's manageable at home"
     )
+    tags: str = Field(
+        description="Comma-separated list of relevant symptom/condition tags (e.g., 'cold,fever,headache,cough')"
+    )
