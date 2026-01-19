@@ -10,12 +10,12 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from lib.supabase_client import supabase
+from app.lib.supabase_client import supabase
 from dotenv import load_dotenv
 import os
-from lib.audio_lib import download_audio_from_url
-from lib.transcript_lib import transcribe_audio
-from services.session_services import (
+from app.lib.audio_lib import download_audio_from_url
+from app.lib.transcript_lib import transcribe_audio
+from app.services.session_services import (
     analyze_health_text,
     recommend_doctors,
     json_response,

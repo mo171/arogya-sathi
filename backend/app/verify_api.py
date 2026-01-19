@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-from lib.supabase_client import supabase
+from app.lib.supabase_client import supabase
 
 # Load environment variables
 load_dotenv()

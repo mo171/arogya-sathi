@@ -1,6 +1,6 @@
 from typing import Any, Type
 from pydantic import BaseModel, Field
-from lib.openai_client import client
+from app.lib.openai_client import client
 
 
 def get_structured_analysis(text: str, system_prompt: str, schema: Type[BaseModel]) -> Any:

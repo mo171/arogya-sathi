@@ -1,6 +1,6 @@
-from lib.llm_lib import get_structured_analysis
-from lib.schema_lib import HealthAnalysisSchema
-from lib.supabase_client import supabase
+from app.lib.llm_lib import get_structured_analysis
+from app.lib.schema_lib import HealthAnalysisSchema
+from app.lib.supabase_client import supabase
 
 
 def analyze_health_text(transcript: str, allergies: str):
