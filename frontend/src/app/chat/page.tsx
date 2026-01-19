@@ -92,7 +92,7 @@ export default function ChatLandingPage() {
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary">1.</span>
                   <span>
-                    Click "Create New Session" to start a new health
+                    Click &quot;Create New Session&quot; to start a new health
                     consultation
                   </span>
                 </li>

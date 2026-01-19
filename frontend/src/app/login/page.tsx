@@ -36,8 +36,8 @@ export default function LoginPage() {
         toast.error(error.message || "Invalid login credentials");
       } else {
         toast.success("Logged in successfully!");
-        // Redirection is handled by AuthContext, or we can force it here just in case
-        router.push("/dashboard");
+        // Redirection is handled by AuthContext
+        // Don't redirectt");
       }
     } catch (err: any) {
       toast.error("An unexpected error occurred");

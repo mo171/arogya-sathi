@@ -27,9 +27,10 @@ load_dotenv()
 app = FastAPI()
 
 # Configure CORS
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -41,6 +42,12 @@ class SessionRequest(BaseModel):
 
 class AudioPayload(BaseModel):
     audio_url: str
+
+
+# Health check endpoint for deployment
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "message": "Backend is running"}
 
 
 """
