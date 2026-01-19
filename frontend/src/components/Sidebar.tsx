@@ -6,14 +6,18 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
+  LogOut,
+  User,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { useUser } from "@/context/AuthContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user, profile, signOut } = useUser();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -122,6 +126,36 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* User Profile & Logout */}
+      <div className="p-4 border-t">
+        {!isCollapsed && profile && (
+          <div className="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <User className="h-4 w-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {profile.name || profile.full_name || "User"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.email}
+              </p>
+            </div>
+          </div>
+        )}
+        
+        <Button
+          onClick={signOut}
+          variant="outline"
+          className={`border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 ${
+            isCollapsed ? "w-full p-2" : "w-full"
+          }`}
+        >
+          <LogOut className={`${isCollapsed ? "h-5 w-5" : "h-4 w-4 mr-2"}`} />
+          {!isCollapsed && "Logout"}
+        </Button>
+      </div>
 
       {/* Help Section */}
       {!isCollapsed && (

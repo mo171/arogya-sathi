@@ -10,19 +10,21 @@ import {
   Clock,
   FileText,
   Activity,
-  User,
   MapPin,
   Phone,
   Download,
-  MoreVertical,
+  CheckCircle,
+  AlertCircle,
+  Eye,
+  FileCheck,
+  LogOut,
+  User,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Sidebar from "@/components/Sidebar";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 
 export default function Dashboard() {
-  const { user, profile, loading } = useUser();
+  const { user, profile, loading, signOut } = useUser();
   const router = useRouter();
 
   // Mock Data
@@ -35,8 +37,6 @@ export default function Dashboard() {
       time: "4:00 PM",
       location: "City Hospital, 2.3 km",
       status: "upcoming",
-      image:
-        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200",
     },
     {
       id: 2,
@@ -46,32 +46,42 @@ export default function Dashboard() {
       time: "10:00 AM",
       location: "Rural Clinic, 3.1 km",
       status: "completed",
-      image:
-        "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200",
     },
   ]);
 
-  const [medicalImages] = useState([
+  const [medicalReports] = useState([
     {
       id: 1,
       title: "X-Ray Report",
+      type: "Radiology",
       date: "15/1/2026",
-      imageUrl:
-        "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&q=80&w=500",
+      doctor: "Dr. Rajesh Kumar",
+      status: "Normal",
+      findings: "No abnormalities detected in chest X-ray",
+      fileSize: "2.4 MB",
+      reportId: "XR-2026-001",
     },
     {
       id: 2,
       title: "Blood Test",
+      type: "Laboratory",
       date: "10/1/2026",
-      imageUrl:
-        "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=500",
+      doctor: "Dr. Priya Sharma",
+      status: "Reviewed",
+      findings: "Hemoglobin: 12.5 g/dL, Blood Sugar: 95 mg/dL - Normal ranges",
+      fileSize: "1.8 MB",
+      reportId: "BT-2026-002",
     },
     {
       id: 3,
-      title: "Skin Condition",
+      title: "Skin Condition Assessment",
+      type: "Dermatology",
       date: "8/1/2026",
-      imageUrl:
-        "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?auto=format&fit=crop&q=80&w=500",
+      doctor: "Dr. Amit Patel",
+      status: "Follow-up Required",
+      findings: "Mild eczema - prescribed topical treatment",
+      fileSize: "3.1 MB",
+      reportId: "SK-2026-003",
     },
   ]);
 
@@ -108,7 +118,33 @@ export default function Dashboard() {
                 Your health records and appointments
               </p>
             </div>
-            {/* Using standard Card for profile snippet or keeping it simple */}
+            
+            {/* User Profile & Logout */}
+            <div className="flex items-center gap-4">
+              {profile && (
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-900">
+                      {profile.name || profile.full_name || "User"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {user?.email}
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                </div>
+              )}
+              <Button
+                onClick={signOut}
+                variant="outline"
+                className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -128,16 +164,16 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Medical Images */}
+            {/* Medical Reports */}
             <Card className="shadow-sm border-gray-100 hover:shadow-md transition-shadow">
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
                   <FileText className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">3</h3>
                   <p className="text-sm font-medium text-gray-500">
-                    Medical Images
+                    Medical Reports
                   </p>
                 </div>
               </CardContent>
@@ -246,40 +282,86 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Medical Images & Reports */}
+          {/* Medical Reports & Documents */}
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Activity className="h-5 w-5 text-gray-500" />
-              Medical Images & Reports
+              Medical Reports & Documents
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {medicalImages.map((img) => (
+            <div className="grid grid-cols-1 gap-4">
+              {medicalReports.map((report) => (
                 <Card
-                  key={img.id}
-                  className="overflow-hidden border-gray-100 shadow-sm hover:shadow-md transition-all group bg-white"
+                  key={report.id}
+                  className="border-gray-100 shadow-sm hover:shadow-md transition-all group bg-white"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
-                    <ImageWithFallback
-                      src={img.imageUrl}
-                      alt={img.title}
-                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <Badge className="absolute top-2 right-2 bg-green-600 hover:bg-green-700">
-                      {img.title.includes("X-Ray") ? "X-Ray" : "Lab Report"}
-                    </Badge>
-                  </div>
-                  <CardContent className="p-4 space-y-4">
-                    <div>
-                      <h4 className="font-bold text-gray-900">{img.title}</h4>
-                      <p className="text-sm text-gray-500">{img.date}</p>
+                  <CardContent className="p-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      {/* Left: Report Info */}
+                      <div className="flex gap-4 flex-1">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl shrink-0">
+                          {report.type === "Radiology" && <Activity className="h-6 w-6" />}
+                          {report.type === "Laboratory" && <FileCheck className="h-6 w-6" />}
+                          {report.type === "Dermatology" && <Eye className="h-6 w-6" />}
+                        </div>
+                        <div className="space-y-2 flex-1">
+                          <div className="flex items-center gap-3">
+                            <h3 className="font-bold text-gray-900 text-lg">
+                              {report.title}
+                            </h3>
+                            <Badge
+                              variant="secondary"
+                              className={
+                                report.status === "Normal"
+                                  ? "bg-green-100 text-green-700 hover:bg-green-100"
+                                  : report.status === "Reviewed"
+                                  ? "bg-blue-100 text-blue-700 hover:bg-blue-100"
+                                  : "bg-orange-100 text-orange-700 hover:bg-orange-100"
+                              }
+                            >
+                              {report.status === "Normal" && <CheckCircle className="h-3 w-3 mr-1" />}
+                              {report.status === "Follow-up Required" && <AlertCircle className="h-3 w-3 mr-1" />}
+                              {report.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <span className="font-medium">{report.type}</span>
+                            <span>•</span>
+                            <span>{report.date}</span>
+                            <span>•</span>
+                            <span>Dr. {report.doctor.split(' ').slice(-2).join(' ')}</span>
+                            <span>•</span>
+                            <span>{report.fileSize}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                            <span className="font-medium">Findings: </span>
+                            {report.findings}
+                          </p>
+                          <div className="flex items-center gap-2 text-xs text-gray-400">
+                            <span>Report ID: {report.reportId}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Actions */}
+                      <div className="flex items-center gap-3 shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-200 text-gray-700 hover:bg-gray-50 bg-white"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-200 text-gray-700 hover:bg-gray-50 bg-white"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
+                      </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 bg-white h-9"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
                   </CardContent>
                 </Card>
               ))}

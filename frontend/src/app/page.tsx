@@ -121,7 +121,7 @@ export default function LandingPage() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border-8 border-white">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1629038152911-f899dbf8d639?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB2aWxsYWdlJTIwZWxkZXIlMjBwaG9uZXxlbnwxfHx8fDE3Njg2OTY3ODR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="https://images.unsplash.com/photo-1629038152911-f899dbf8d639?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx8fDE3Njg2OTY3ODR8MA&ixlib=rb-4.1.0&q=80&w=1080"
                   alt="Rural healthcare"
                   className="w-full h-full object-cover"
                 />
