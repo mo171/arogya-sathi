@@ -32,7 +32,7 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { user, logout } = useUser();
+  const { user, signOut } = useUser();
 
   const handleNavigateToLogin = () => {
     if (user) {
@@ -44,7 +44,7 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
   };
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     router.push("/");
     setIsOpen(false);
   };
