@@ -1,14 +1,23 @@
 """
-Entry point for the FastAPI application.
-This file should be at the root of the backend directory.
+Vercel entry point for FastAPI application
 """
+import sys
+import os
 
-from app.app import app
+# Add the current directory to Python path
+sys.path.insert(0, os.path.dirname(__file__))
 
-# Export the app for Vercel
-# Vercel will use this as the ASGI application
+try:
+    from app.app import app
+except ImportError as e:
+    print(f"Import error: {e}")
+    # Create a minimal app as fallback
+    from fastapi import FastAPI
+    app = FastAPI()
+    
+    @app.get("/")
+    def root():
+        return {"error": "Import failed", "message": str(e)}
+
+# This is what Vercel will use
 handler = app
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
