@@ -20,50 +20,87 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
+    return () => {
+      setMounted(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    let abortController = new AbortController();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (abortController.signal.aborted || !mounted) return;
+
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        // Fetch user profile
-        const { data: profileData, error } = await supabase
-          .from("users") // Assuming 'users' table holds profile info
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
+        try {
+          // Fetch user profile with abort signal
+          const { data: profileData } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", session.user.id)
+            .abortSignal(abortController.signal)
+            .single();
 
-        if (profileData) {
-          setProfile(profileData);
-          // Redirect to dashboard if on login/register pages
-          if (["/login", "/signup", "/register"].includes(pathname)) {
-            router.push("/dashboard");
+          if (abortController.signal.aborted || !mounted) return;
+
+          if (profileData) {
+            setProfile(profileData);
+            // Redirect to dashboard if on login/register pages
+            if (["/login", "/signup", "/register"].includes(pathname)) {
+              router.push("/dashboard");
+            }
+          } else {
+            // No profile found, redirect to complete profile
+            if (!pathname.startsWith("/complete-profile")) {
+              router.push("/complete-profile");
+            }
           }
-        } else {
-          // No profile found, redirect to complete profile
-          if (!pathname.startsWith("/complete-profile")) {
-            router.push("/complete-profile");
+        } catch (error: any) {
+          // Only log errors that aren't abort errors
+          if (error.name !== 'AbortError' && mounted) {
+            console.error("Profile fetch error:", error);
           }
         }
       } else {
-        setProfile(null);
+        if (mounted) {
+          setProfile(null);
+        }
       }
-      setLoading(false);
+      
+      if (mounted) {
+        setLoading(false);
+      }
     });
 
     return () => {
+      abortController.abort();
       subscription.unsubscribe();
     };
-  }, [pathname, router]);
+  }, [pathname, router, mounted]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+    if (!mounted) return;
+    try {
+      await supabase.auth.signOut();
+      if (mounted) {
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
   };
 
   return (

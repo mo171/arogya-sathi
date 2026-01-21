@@ -29,6 +29,7 @@ export default function CompleteProfile() {
   const router = useRouter();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const [userType, setUserType] = useState<"patient" | "doctor">("patient");
 
@@ -58,7 +59,14 @@ export default function CompleteProfile() {
   });
 
   useEffect(() => {
-    if (user) {
+    setMounted(true);
+    return () => {
+      setMounted(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (user && mounted) {
       // Pre-fill from Auth Metadata if available
       const meta = user.user_metadata;
       setFormData((prev) => ({
@@ -68,14 +76,14 @@ export default function CompleteProfile() {
         contactEmail: user.email || prev.contactEmail,
       }));
     }
-  }, [user]);
+  }, [user, mounted]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user || !mounted) return;
     setLoading(true);
 
     try {
@@ -131,12 +139,26 @@ export default function CompleteProfile() {
 
       if (error) throw error;
 
-      toast.success("Profile updated successfully!");
-      window.location.href = "/dashboard";
+      if (mounted) {
+        toast.success("Profile updated successfully!");
+        
+        // Use setTimeout to ensure the toast is shown before navigation
+        setTimeout(() => {
+          if (mounted) {
+            router.push("/dashboard");
+          }
+        }, 1000);
+      }
+      
     } catch (err: any) {
-      toast.error(err.message || "Failed to update profile");
+      console.error("Profile update error:", err);
+      if (mounted) {
+        toast.error(err.message || "Failed to update profile");
+      }
     } finally {
-      setLoading(false);
+      if (mounted) {
+        setLoading(false);
+      }
     }
   };
 
