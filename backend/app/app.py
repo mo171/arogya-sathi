@@ -67,17 +67,28 @@ def supabase_test():
 # ENDPOINT- /api/v1/sessions/
 @app.post("/api/v1/sessions/new")
 async def create_session(payload: SessionRequest):
-    data = {"user_id": payload.user_id}
     try:
-        if not data["user_id"]:
+        if not payload.user_id:
             return {"error": "User ID is required", "status_code": 400}
 
+        # Create session with minimal data for faster insertion
+        data = {
+            "user_id": payload.user_id,
+            "status": "pending",
+            "created_at": "now()"
+        }
+
         result = supabase.table("health_sessions").insert(data).execute()
+        
+        if not result.data:
+            raise Exception("Failed to create session")
+            
         session_id = result.data[0]["id"]
 
         return {"session_id": session_id, "status_code": 201}
 
     except Exception as e:
+        print(f"Session creation error: {e}")
         return {"error": str(e), "status_code": 500}
 
 

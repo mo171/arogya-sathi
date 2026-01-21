@@ -10,10 +10,13 @@ def download_audio_from_url(audio_url: str) -> str:
     Returns the absolute path to the downloaded file.
     """
     try:
-        # Define the temp directory path relative to this file
-        # backend/app/lib/audio.lib.py -> backend/app/temp
-        base_dir = Path(__file__).parent.parent
-        temp_dir = base_dir / "temp"
+        # Use /tmp directory for serverless environments like Vercel
+        if os.environ.get('VERCEL'):
+            temp_dir = Path("/tmp")
+        else:
+            # Define the temp directory path relative to this file for local development
+            base_dir = Path(__file__).parent.parent
+            temp_dir = base_dir / "temp"
         
         # Ensure the temp directory exists
         temp_dir.mkdir(parents=True, exist_ok=True)
@@ -27,7 +30,7 @@ def download_audio_from_url(audio_url: str) -> str:
         file_path = temp_dir / filename
         
         # Download the file
-        response = requests.get(audio_url, stream=True)
+        response = requests.get(audio_url, stream=True, timeout=30)
         response.raise_for_status()
         
         with open(file_path, "wb") as f:

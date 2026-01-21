@@ -1,32 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Loader2, MessageSquare } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { api } from "@/lib/axios";
-import { supabase } from "@/lib/supabase";
+import { useUser } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 export default function ChatLandingPage() {
   const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
+  const { user, loading } = useUser();
 
   const handleCreateSession = async () => {
+    if (!user) {
+      toast.error("Please log in to create a session");
+      return;
+    }
+
     try {
       setIsCreating(true);
-
-      // Get current user from Supabase
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        alert("Please log in to create a session");
-        return;
-      }
-      console.log(user.id);
 
       // Call backend API to create session
       const response = await api.post("/api/v1/sessions/new", {
@@ -35,15 +31,38 @@ export default function ChatLandingPage() {
 
       const { session_id } = response.data;
 
-      // Navigate to the chat session
-      router.push(`/chat/${session_id}`);
-    } catch (error) {
+      if (session_id) {
+        // Navigate to the chat session immediately
+        router.push(`/chat/${session_id}`);
+      } else {
+        throw new Error("No session ID received");
+      }
+    } catch (error: any) {
       console.error("Error creating session:", error);
-      alert("Failed to create session. Please try again.");
+      
+      if (error.code === 'ECONNABORTED') {
+        toast.error("Request timed out. Please check your connection and try again.");
+      } else if (error.response?.status === 500) {
+        toast.error("Server error. Please try again in a moment.");
+      } else {
+        toast.error("Failed to create session. Please try again.");
+      }
     } finally {
       setIsCreating(false);
     }
   };
+
+  // Show loading state while auth is being determined
+  if (loading) {
+    return (
+      <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
