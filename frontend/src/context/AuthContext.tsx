@@ -24,6 +24,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Hardcoded user ID
+  const HARDCODED_USER_ID = "80517dd5-ad8a-49dc-9f81-2c8f6741cb5f";
+
   useEffect(() => {
     setMounted(true);
     return () => {
@@ -34,73 +37,74 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!mounted) return;
 
-    let abortController = new AbortController();
+    const fetchHardcodedUser = async () => {
+      try {
+        // Mock Session and User objects
+        const mockUser = {
+          id: HARDCODED_USER_ID,
+          aud: "authenticated",
+          role: "authenticated",
+          email: "hardcoded@example.com",
+          email_confirmed_at: new Date().toISOString(),
+          phone: "",
+          confirmation_sent_at: "",
+          confirmed_at: new Date().toISOString(),
+          last_sign_in_at: new Date().toISOString(),
+          app_metadata: { provider: "email", providers: ["email"] },
+          user_metadata: {},
+          identities: [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as User;
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (abortController.signal.aborted || !mounted) return;
+        const mockSession = {
+          access_token: "mock-access-token",
+          token_type: "bearer",
+          expires_in: 3600,
+          refresh_token: "mock-refresh-token",
+          user: mockUser,
+          expires_at: Math.floor(Date.now() / 1000) + 3600,
+        } as Session;
 
-      setSession(session);
-      setUser(session?.user ?? null);
+        setSession(mockSession);
+        setUser(mockUser);
 
-      if (session?.user) {
-        try {
-          // Fetch user profile with abort signal
-          const { data: profileData } = await supabase
-            .from("users")
-            .select("*")
-            .eq("id", session.user.id)
-            .abortSignal(abortController.signal)
-            .single();
+        // Fetch user profile from 'users' table
+        const { data: profileData, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", HARDCODED_USER_ID)
+          .single();
 
-          if (abortController.signal.aborted || !mounted) return;
-
-          if (profileData) {
-            setProfile(profileData);
-            // Redirect to dashboard if on login/register pages
-            if (["/login", "/signup", "/register"].includes(pathname)) {
-              router.push("/dashboard");
-            }
-          } else {
-            // No profile found, redirect to complete profile
-            if (!pathname.startsWith("/complete-profile")) {
-              router.push("/complete-profile");
-            }
-          }
-        } catch (error: any) {
-          // Only log errors that aren't abort errors
-          if (error.name !== 'AbortError' && mounted) {
-            console.error("Profile fetch error:", error);
-          }
+        if (profileData) {
+          setProfile(profileData);
+        } else if (error) {
+          console.error("Error fetching hardcoded profile:", error);
         }
-      } else {
-        if (mounted) {
-          setProfile(null);
+
+        setLoading(false);
+
+        // Optional: Redirect away from login if needed, but since we are always "authed",
+        // we might want to just let the user navigate freely or push them to dashboard if they hit login.
+        if (
+          ["/login", "/signup", "/register", "/complete-profile"].includes(
+            pathname,
+          )
+        ) {
+          router.push("/dashboard");
         }
-      }
-      
-      if (mounted) {
+      } catch (err) {
+        console.error("Hardcoded auth setup failed", err);
         setLoading(false);
       }
-    });
-
-    return () => {
-      abortController.abort();
-      subscription.unsubscribe();
     };
-  }, [pathname, router, mounted]);
+
+    fetchHardcodedUser();
+  }, [mounted, pathname, router]);
 
   const signOut = async () => {
-    if (!mounted) return;
-    try {
-      await supabase.auth.signOut();
-      if (mounted) {
-        router.push("/login");
-      }
-    } catch (error) {
-      console.error("Sign out error:", error);
-    }
+    // No-op or reload to reset
+    window.location.reload();
   };
 
   return (
