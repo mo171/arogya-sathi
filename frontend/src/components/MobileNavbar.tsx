@@ -23,16 +23,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUser } from "@/context/AuthContext";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
+import { languageNames } from "@/lib/i18n/translations";
 
 interface MobileNavbarProps {
   showNavItems?: boolean;
 }
 
-export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps) {
+export default function MobileNavbar({
+  showNavItems = false,
+}: MobileNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { user, signOut } = useUser();
+  const { language, setLanguage, t } = useTranslation();
 
   const handleNavigateToLogin = () => {
     if (user) {
@@ -52,26 +57,17 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
   const navItems = [
     {
       id: "dashboard",
-      label: "Dashboard",
-      labelHindi: "डैशबोर्ड",
       icon: LayoutDashboard,
-      description: "Appointments & Records",
       href: "/dashboard",
     },
     {
       id: "chat",
-      label: "Health Chat",
-      labelHindi: "स्वास्थ्य चैट",
       icon: MessageSquare,
-      description: "Talk to AI Assistant",
       href: "/chat",
     },
     {
       id: "community",
-      label: "Community",
-      labelHindi: "समुदाय",
       icon: Users,
-      description: "Search Remedies",
       href: "/community",
     },
   ];
@@ -90,21 +86,23 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
-          <Select defaultValue="hi">
+          <Select
+            value={language}
+            onValueChange={(value) => setLanguage(value as Language)}
+          >
             <SelectTrigger className="w-[160px] border-primary/20">
               <Globe className="h-4 w-4 mr-2 text-primary" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="hi">हिन्दी</SelectItem>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="ta">தமிழ்</SelectItem>
-              <SelectItem value="te">తెలుగు</SelectItem>
-              <SelectItem value="bn">বাংলা</SelectItem>
-              <SelectItem value="mr">मराठी</SelectItem>
+              {Object.entries(languageNames).map(([code, name]) => (
+                <SelectItem key={code} value={code}>
+                  {name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          
+
           {user && showNavItems && (
             <nav className="flex items-center gap-2">
               {navItems.map((item) => {
@@ -121,7 +119,7 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
                     }`}
                   >
                     <Icon className="h-4 w-4" />
-                    {item.label}
+                    {t.navbar[item.id as keyof typeof t.navbar]}
                   </Link>
                 );
               })}
@@ -133,7 +131,7 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
             variant="outline"
             className="border-primary text-primary hover:bg-primary hover:text-white"
           >
-            {user ? "Dashboard" : "Login"}
+            {user ? t.navbar.dashboard : t.navbar.login}
           </Button>
 
           {user && (
@@ -162,7 +160,7 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
                 <div className="flex items-center justify-between pb-4 border-b">
                   <div className="flex items-center gap-2">
                     <Leaf className="h-6 w-6 text-primary" />
-                    <span className="font-bold text-primary">GraminSeva</span>
+                    <span className="font-bold text-primary">Arogya Sathi</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -176,18 +174,20 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
 
                 {/* Language Selector */}
                 <div className="py-4 border-b">
-                  <Select defaultValue="hi">
+                  <Select
+                    value={language}
+                    onValueChange={(value) => setLanguage(value as Language)}
+                  >
                     <SelectTrigger className="w-full border-primary/20">
                       <Globe className="h-4 w-4 mr-2 text-primary" />
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="hi">हिन्दी</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="ta">தமிழ்</SelectItem>
-                      <SelectItem value="te">తెలుగు</SelectItem>
-                      <SelectItem value="bn">বাংলা</SelectItem>
-                      <SelectItem value="mr">मराठी</SelectItem>
+                      {Object.entries(languageNames).map(([code, name]) => (
+                        <SelectItem key={code} value={code}>
+                          {name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -211,9 +211,17 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
                         >
                           <Icon className="h-5 w-5" />
                           <div className="flex-1 text-left">
-                            <div className="font-medium">{item.label}</div>
-                            <div className={`text-xs ${isActive ? "text-white/80" : "text-gray-500"}`}>
-                              {item.description}
+                            <div className="font-medium">
+                              {t.navbar[item.id as keyof typeof t.navbar]}
+                            </div>
+                            <div
+                              className={`text-xs ${isActive ? "text-white/80" : "text-gray-500"}`}
+                            >
+                              {item.id === "dashboard"
+                                ? t.navbar.appointmentsRecords
+                                : item.id === "chat"
+                                  ? t.navbar.talkToAI
+                                  : t.navbar.searchRemedies}
                             </div>
                           </div>
                         </Link>
@@ -228,9 +236,9 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
                     onClick={handleNavigateToLogin}
                     className="w-full bg-primary hover:bg-primary/90 text-white"
                   >
-                    {user ? "Go to Dashboard" : "Login / Sign Up"}
+                    {user ? t.navbar.goToDashboard : t.navbar.loginSignup}
                   </Button>
-                  
+
                   {user && (
                     <Button
                       onClick={handleLogout}
@@ -238,7 +246,7 @@ export default function MobileNavbar({ showNavItems = false }: MobileNavbarProps
                       className="w-full border-red-200 text-red-600 hover:bg-red-50"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+                      {t.navbar.logout}
                     </Button>
                   )}
                 </div>

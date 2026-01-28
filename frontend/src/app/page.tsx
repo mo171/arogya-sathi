@@ -13,8 +13,11 @@ import {
 } from "@/components/ui/select";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
+import { languageNames, Language } from "@/lib/i18n/translations";
 
 export default function LandingPage() {
+  const { language, setLanguage, t } = useTranslation();
   const router = useRouter();
   const { user } = useUser();
 
@@ -44,22 +47,24 @@ export default function LandingPage() {
               <Leaf className="h-8 w-8 text-primary" strokeWidth={2.5} />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full" />
             </div>
-            <span className="text-xl font-bold text-primary">GraminSeva</span>
+            <span className="text-xl font-bold text-primary">Arogya Sathi</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <Select defaultValue="hi">
+            <Select
+              value={language}
+              onValueChange={(value) => setLanguage(value as Language)}
+            >
               <SelectTrigger className="w-[160px] border-primary/20">
                 <Globe className="h-4 w-4 mr-2 text-primary" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hi">हिन्दी</SelectItem>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="ta">தமிழ்</SelectItem>
-                <SelectItem value="te">తెలుగు</SelectItem>
-                <SelectItem value="bn">বাংলা</SelectItem>
-                <SelectItem value="mr">मराठी</SelectItem>
+                {Object.entries(languageNames).map(([code, name]) => (
+                  <SelectItem key={code} value={code}>
+                    {name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button
@@ -67,7 +72,7 @@ export default function LandingPage() {
               variant="outline"
               className="border-primary text-primary hover:bg-primary hover:text-white"
             >
-              {user ? "Dashboard" : "Login"}
+              {user ? t.navbar.dashboard : t.navbar.login}
             </Button>
           </div>
         </div>
@@ -81,17 +86,22 @@ export default function LandingPage() {
             <div className="space-y-6">
               <div className="inline-block px-4 py-2 bg-secondary/10 rounded-full border border-secondary/30">
                 <span className="text-sm font-semibold text-secondary">
-                  🌾 Rural Healthcare Reimagined
+                  {t.landing.badge}
                 </span>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                आपकी भाषा,
-                <br />
-                आपका स्वास्थ्य
+                {language === "hi" ? (
+                  <>
+                    आपकी भाषा,
+                    <br />
+                    आपका स्वास्थ्य
+                  </>
+                ) : (
+                  t.landing.heroTitle
+                )}
               </h1>
               <p className="text-lg md:text-xl text-gray-600 max-w-xl">
-                Talk to our AI to understand your health, get home remedies, or
-                book a doctor instantly.
+                {t.landing.heroSubtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -100,21 +110,19 @@ export default function LandingPage() {
                   className="bg-primary hover:bg-primary/90 text-white text-lg px-8 py-6"
                 >
                   <Mic className="mr-2 h-5 w-5" />
-                  Start Speaking
+                  {t.landing.startSpeaking}
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
                   className="border-2 border-primary text-primary hover:bg-primary/5 text-lg px-8 py-6"
                 >
-                  Learn More
+                  {t.landing.learnMore}
                 </Button>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-500 pt-4">
                 <Shield className="h-5 w-5 text-primary" />
-                <span>
-                  100% Secure & Private - Your health data stays with you
-                </span>
+                <span>{t.landing.securePrivate}</span>
               </div>
             </div>
 
@@ -133,9 +141,11 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-gray-900">
-                      15+ Languages
+                      {t.landing.languagesSupport}
                     </div>
-                    <div className="text-xs text-gray-500">Voice Support</div>
+                    <div className="text-xs text-gray-500">
+                      {t.landing.voiceSupport}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -149,11 +159,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-              Healthcare In Your Hands
+              {t.landing.featuresTitle}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Bridging traditional wisdom with modern medicine, accessible in
-              your native language
+              {t.landing.featuresSubtitle}
             </p>
           </div>
 
@@ -165,12 +174,10 @@ export default function LandingPage() {
                   <Mic className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  Audio Diagnosis
+                  {t.landing.audioDiagnosis}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Speak in your native tongue. Our AI understands 15+ regional
-                  languages and dialects to help diagnose your symptoms
-                  accurately.
+                  {t.landing.audioDiagnosisDesc}
                 </p>
                 <div className="pt-4 flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-accent text-primary text-sm rounded-full">
@@ -193,11 +200,10 @@ export default function LandingPage() {
                   <Leaf className="h-8 w-8 text-secondary" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  Traditional Remedies
+                  {t.landing.traditionalRemedies}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Dadi-Nani's wisdom verified by AI. Get safe, time-tested home
-                  remedies for common ailments with step-by-step guidance.
+                  {t.landing.traditionalRemediesDesc}
                 </p>
                 <div className="aspect-video rounded-lg overflow-hidden mt-4">
                   <ImageWithFallback
@@ -216,11 +222,10 @@ export default function LandingPage() {
                   <Calendar className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  Instant Doctor Booking
+                  {t.landing.instantDoctorBooking}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Find the nearest doctors, check availability in real-time, and
-                  book appointments instantly. All from one conversation.
+                  {t.landing.instantDoctorBookingDesc}
                 </p>
                 <div className="aspect-video rounded-lg overflow-hidden mt-4">
                   <ImageWithFallback
@@ -239,11 +244,10 @@ export default function LandingPage() {
       <section className="py-20 bg-gradient-to-br from-primary to-primary/80 text-white">
         <div className="container mx-auto px-4 text-center space-y-8">
           <h2 className="text-3xl md:text-5xl font-bold">
-            Ready to take control of your health?
+            {t.landing.ctaTitle}
           </h2>
           <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-            Join thousands of rural families who trust GraminSeva for their
-            healthcare needs
+            {t.landing.ctaSubtitle}
           </p>
           <Button
             onClick={handleNavigateToLogin}
@@ -251,11 +255,11 @@ export default function LandingPage() {
             className="bg-white text-primary hover:bg-gray-100 text-lg px-10 py-6"
           >
             <Mic className="mr-2 h-5 w-5" />
-            Get Started Now
+            {t.landing.getStartedNow}
           </Button>
         </div>
       </section>
-  
+
       {/* Footer */}
       <footer className="bg-gray-50 border-t py-12">
         <div className="container mx-auto px-4">
@@ -263,81 +267,84 @@ export default function LandingPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Leaf className="h-6 w-6 text-primary" />
-                <span className="font-bold text-primary">GraminSeva</span>
+                <span className="font-bold text-primary">Arogya Sathi</span>
               </div>
-              <p className="text-sm text-gray-600">
-                Making healthcare accessible in every village, every language.
-              </p>
+              <p className="text-sm text-gray-600">{t.landing.footerTagline}</p>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-gray-900">Quick Links</h4>
+              <h4 className="font-semibold mb-4 text-gray-900">
+                {t.landing.quickLinks}
+              </h4>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>
                   <a href="#" className="hover:text-primary">
-                    About Us
+                    {t.landing.aboutUs}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    How It Works
+                    {t.landing.howItWorks}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Languages
+                    {t.landing.languages}
                   </a>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-gray-900">Support</h4>
+              <h4 className="font-semibold mb-4 text-gray-900">
+                {t.landing.support}
+              </h4>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Help Center
+                    {t.landing.helpCenter}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Terms & Conditions
+                    {t.landing.termsConditions}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Privacy Policy
+                    {t.landing.privacyPolicy}
                   </a>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4 text-gray-900">Emergency</h4>
+              <h4 className="font-semibold mb-4 text-gray-900">
+                {t.landing.emergency}
+              </h4>
               <div className="space-y-3">
                 <a
                   href="tel:108"
                   className="flex items-center gap-2 text-destructive hover:text-destructive/80"
                 >
                   <Phone className="h-4 w-4" />
-                  <span className="font-semibold">108 - Ambulance</span>
+                  <span className="font-semibold">{t.landing.ambulance}</span>
                 </a>
                 <a
                   href="tel:102"
                   className="flex items-center gap-2 text-destructive hover:text-destructive/80"
                 >
                   <Phone className="h-4 w-4" />
-                  <span className="font-semibold">102 - Health Helpline</span>
+                  <span className="font-semibold">
+                    {t.landing.healthHelpline}
+                  </span>
                 </a>
               </div>
             </div>
           </div>
 
           <div className="mt-12 pt-8 border-t text-center text-sm text-gray-500">
-            <p>
-              © 2026 GraminSeva. All rights reserved. Built with ❤️ for Rural
-              India.
-            </p>
+            <p>{t.landing.copyright}</p>
           </div>
         </div>
       </footer>

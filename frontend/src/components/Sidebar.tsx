@@ -86,7 +86,7 @@ export default function Sidebar() {
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <h2 className="font-bold text-primary truncate">GraminSeva</h2>
+              <h2 className="font-bold text-primary truncate">Arogya Sathi</h2>
               <p className="text-xs text-gray-500 truncate">Rural Health</p>
             </div>
           )}
@@ -138,13 +138,11 @@ export default function Sidebar() {
               <p className="text-sm font-medium text-gray-900 truncate">
                 {profile.name || profile.full_name || "User"}
               </p>
-              <p className="text-xs text-gray-500 truncate">
-                {user?.email}
-              </p>
+              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
             </div>
           </div>
         )}
-        
+
         <Button
           onClick={signOut}
           variant="outline"
