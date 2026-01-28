@@ -14,10 +14,12 @@ import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/context/AuthContext";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, profile, signOut } = useUser();
+  const { t } = useTranslation();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -87,7 +89,9 @@ export default function Sidebar() {
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-primary truncate">Arogya Sathi</h2>
-              <p className="text-xs text-gray-500 truncate">Rural Health</p>
+              <p className="text-xs text-gray-500 truncate">
+                {t.sidebar.ruralHealth}
+              </p>
             </div>
           )}
         </div>
@@ -114,11 +118,17 @@ export default function Sidebar() {
               />
               {!isCollapsed && (
                 <div className="flex-1 text-left min-w-0">
-                  <div className="font-medium truncate">{item.label}</div>
+                  <div className="font-medium truncate">
+                    {t.navbar[item.id as keyof typeof t.navbar]}
+                  </div>
                   <div
                     className={`text-xs truncate ${isActive ? "text-white/80" : "text-gray-500"}`}
                   >
-                    {item.description}
+                    {item.id === "dashboard"
+                      ? t.navbar.appointmentsRecords
+                      : item.id === "chat"
+                        ? t.navbar.talkToAI
+                        : t.navbar.searchRemedies}
                   </div>
                 </div>
               )}
@@ -151,7 +161,7 @@ export default function Sidebar() {
           }`}
         >
           <LogOut className={`${isCollapsed ? "h-5 w-5" : "h-4 w-4 mr-2"}`} />
-          {!isCollapsed && "Logout"}
+          {!isCollapsed && t.navbar.logout}
         </Button>
       </div>
 
@@ -159,16 +169,16 @@ export default function Sidebar() {
       {!isCollapsed && (
         <div className="p-4 border-t">
           <div className="bg-accent/50 rounded-lg p-4 space-y-2">
-            <p className="text-sm font-semibold text-gray-900">Need Help?</p>
-            <p className="text-xs text-gray-600">
-              Contact our support team for assistance
+            <p className="text-sm font-semibold text-gray-900">
+              {t.sidebar.needHelp}
             </p>
+            <p className="text-xs text-gray-600">{t.sidebar.contactSupport}</p>
             <Button
               variant="outline"
               size="sm"
               className="w-full text-xs border-primary/20 hover:bg-primary/5"
             >
-              Get Support
+              {t.sidebar.getSupport}
             </Button>
           </div>
         </div>

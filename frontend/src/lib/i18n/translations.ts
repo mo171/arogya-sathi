@@ -106,6 +106,30 @@ export interface Translations {
     healthHelpline: string;
     copyright: string;
   };
+
+  // Sidebar
+  sidebar: {
+    ruralHealth: string;
+    needHelp: string;
+    contactSupport: string;
+    getSupport: string;
+  };
+
+  // Chat Page
+  chatPage: {
+    healthAssistant: string;
+    startConversation: string;
+    createNewSession: string;
+    creatingSession: string;
+    howItWorks: string;
+    step1: string;
+    step2: string;
+    step3: string;
+    loginToCreate: string;
+    requestTimeout: string;
+    serverError: string;
+    sessionFailed: string;
+  };
 }
 
 // English translations
@@ -209,6 +233,30 @@ export const en: Translations = {
     copyright:
       "© 2026 Arogya Sathi. All rights reserved. Built with ❤️ for Rural India.",
   },
+  sidebar: {
+    ruralHealth: "Rural Health",
+    needHelp: "Need Help?",
+    contactSupport: "Contact our support team for assistance",
+    getSupport: "Get Support",
+  },
+  chatPage: {
+    healthAssistant: "Health Assistant",
+    startConversation:
+      "Start a new conversation to get personalized health advice, home remedies, and doctor recommendations.",
+    createNewSession: "Create New Session",
+    creatingSession: "Creating Session...",
+    howItWorks: "How it works:",
+    step1: 'Click "Create New Session" to start a new health consultation',
+    step2:
+      "Describe your symptoms by recording your voice in your preferred language",
+    step3:
+      "Get instant analysis, home remedies, and nearby doctor recommendations",
+    loginToCreate: "Please log in to create a session",
+    requestTimeout:
+      "Request timed out. Please check your connection and try again.",
+    serverError: "Server error. Please try again in a moment.",
+    sessionFailed: "Failed to create session. Please try again.",
+  },
 };
 
 // Hindi translations (हिन्दी)
@@ -311,6 +359,31 @@ export const hi: Translations = {
     healthHelpline: "102 - स्वास्थ्य हेल्पलाइन",
     copyright:
       "© 2026 आरोग्य साथी। सर्वाधिकार सुरक्षित। ग्रामीण भारत के लिए ❤️ के साथ बनाया गया।",
+  },
+  sidebar: {
+    ruralHealth: "ग्रामीण स्वास्थ्य",
+    needHelp: "मदद चाहिए?",
+    contactSupport: "सहायता के लिए हमारी सहायता टीम से संपर्क करें",
+    getSupport: "सहायता प्राप्त करें",
+  },
+  chatPage: {
+    healthAssistant: "स्वास्थ्य सहायक",
+    startConversation:
+      "व्यक्तिगत स्वास्थ्य सलाह, घरेलू उपचार और डॉक्टर की सिफारिशें प्राप्त करने के लिए एक नई बातचीत शुरू करें।",
+    createNewSession: "नया सत्र बनाएं",
+    creatingSession: "सत्र बनाया जा रहा है...",
+    howItWorks: "यह कैसे काम करता है:",
+    step1:
+      'नया स्वास्थ्य परामर्श शुरू करने के लिए "नया सत्र बनाएं" पर क्लिक करें',
+    step2:
+      "अपनी पसंदीदा भाषा में अपनी आवाज रिकॉर्ड करके अपने लक्षणों का वर्णन करें",
+    step3:
+      "तत्काल विश्लेषण, घरेलू उपचार और आस-पास के डॉक्टर की सिफारिशें प्राप्त करें",
+    loginToCreate: "सत्र बनाने के लिए कृपया लॉग इन करें",
+    requestTimeout:
+      "अनुरोध समय समाप्त हो गया। कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें।",
+    serverError: "सर्वर त्रुटि। कृपया एक क्षण में पुनः प्रयास करें।",
+    sessionFailed: "सत्र बनाने में विफल। कृपया पुनः प्रयास करें।",
   },
 };
 
@@ -416,6 +489,31 @@ export const ta: Translations = {
     copyright:
       "© 2026 அரோக்ய சாத்தி. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை. கிராமப்புற இந்தியாவுக்காக ❤️ உடன் உருவாக்கப்பட்டது.",
   },
+  sidebar: {
+    ruralHealth: "கிராமப்புற சுகாதாரம்",
+    needHelp: "உதவி தேவையா?",
+    contactSupport: "உதவிக்கு எங்கள் ஆதரவு குழுவைத் தொடர்பு கொள்ளுங்கள்",
+    getSupport: "ஆதரவைப் பெறுங்கள்",
+  },
+  chatPage: {
+    healthAssistant: "சுகாதார உதவியாளர்",
+    startConversation:
+      "தனிப்பயனாக்கப்பட்ட சுகாதார ஆலோசனை, வீட்டு வைத்தியம் மற்றும் மருத்துவர் பரிந்துரைகளைப் பெற புதிய உரையாடலைத் தொடங்குங்கள்.",
+    createNewSession: "புதிய அமர்வை உருவாக்கவும்",
+    creatingSession: "அமர்வை உருவாக்குகிறது...",
+    howItWorks: "இது எப்படி வேலை செய்கிறது:",
+    step1:
+      '"புதிய அமர்வை உருவாக்கவும்" என்பதைக் கிளிக் செய்து புதிய சுகாதார ஆலோசனையைத் தொடங்கவும்',
+    step2:
+      "உங்கள் விருப்பமான மொழியில் உங்கள் குரலைப் பதிவு செய்வதன் மூலம் உங்கள் அறிகுறிகளை விவரிக்கவும்",
+    step3:
+      "உடனடி பகுப்பாய்வு, வீட்டு வைத்தியம் மற்றும் அருகிலுள்ள மருத்துவர் பரிந்துரைகளைப் பெறுங்கள்",
+    loginToCreate: "அமர்வை உருவாக்க தயவுசெய்து உள்நுழையவும்",
+    requestTimeout:
+      "கோரிக்கை நேரம் முடிந்தது. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+    serverError: "சேவையக பிழை. சிறிது நேரத்தில் மீண்டும் முயற்சிக்கவும்.",
+    sessionFailed: "அமர்வை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
+  },
 };
 
 // Telugu translations (తెలుగు)
@@ -519,6 +617,31 @@ export const te: Translations = {
     healthHelpline: "102 - ఆరోగ్య హెల్ప్‌లైన్",
     copyright:
       "© 2026 ఆరోగ్య సాథీ. అన్ని హక్కులు రక్షించబడ్డాయి. గ్రామీణ భారతదేశం కోసం ❤️ తో నిర్మించబడింది.",
+  },
+  sidebar: {
+    ruralHealth: "గ్రామీణ ఆరోగ్యం",
+    needHelp: "సహాయం కావాలా?",
+    contactSupport: "సహాయం కోసం మా మద్దతు బృందాన్ని సంప్రదించండి",
+    getSupport: "మద్దతు పొందండి",
+  },
+  chatPage: {
+    healthAssistant: "ఆరోగ్య సహాయకుడు",
+    startConversation:
+      "వ్యక్తిగతీకరించిన ఆరోగ్య సలహా, ఇంటి వైద్యాలు మరియు డాక్టర్ సిఫార్సులను పొందడానికి కొత్త సంభాషణను ప్రారంభించండి.",
+    createNewSession: "కొత్త సెషన్ సృష్టించండి",
+    creatingSession: "సెషన్ సృష్టిస్తోంది...",
+    howItWorks: "ఇది ఎలా పనిచేస్తుంది:",
+    step1:
+      '"కొత్త సెషన్ సృష్టించండి" క్లిక్ చేసి కొత్త ఆరోగ్య సంప్రదింపును ప్రారంభించండి',
+    step2:
+      "మీ ఇష్టమైన భాషలో మీ వాయిస్‌ను రికార్డ్ చేయడం ద్వారా మీ లక్షణాలను వివరించండి",
+    step3:
+      "తక్షణ విశ్లేషణ, ఇంటి వైద్యాలు మరియు సమీప డాక్టర్ సిఫార్సులను పొందండి",
+    loginToCreate: "సెషన్ సృష్టించడానికి దయచేసి లాగిన్ అవ్వండి",
+    requestTimeout:
+      "అభ్యర్థన సమయం ముగిసింది. దయచేసి మీ కనెక్షన్‌ను తనిఖీ చేసి మళ్లీ ప్రయత్నించండి.",
+    serverError: "సర్వర్ లోపం. దయచేసి కొద్దిసేపటిలో మళ్లీ ప్రయత్నించండి.",
+    sessionFailed: "సెషన్ సృష్టించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.",
   },
 };
 
@@ -624,6 +747,31 @@ export const bn: Translations = {
     copyright:
       "© 2026 আরোগ্য সাথী। সর্বস্বত্ব সংরক্ষিত। গ্রামীণ ভারতের জন্য ❤️ দিয়ে তৈরি।",
   },
+  sidebar: {
+    ruralHealth: "গ্রামীণ স্বাস্থ্য",
+    needHelp: "সাহায্য প্রয়োজন?",
+    contactSupport: "সহায়তার জন্য আমাদের সহায়তা দলের সাথে যোগাযোগ করুন",
+    getSupport: "সহায়তা পান",
+  },
+  chatPage: {
+    healthAssistant: "স্বাস্থ্য সহায়ক",
+    startConversation:
+      "ব্যক্তিগত স্বাস্থ্য পরামর্শ, ঘরোয়া প্রতিকার এবং ডাক্তারের সুপারিশ পেতে একটি নতুন কথোপকথন শুরু করুন।",
+    createNewSession: "নতুন সেশন তৈরি করুন",
+    creatingSession: "সেশন তৈরি হচ্ছে...",
+    howItWorks: "এটি কিভাবে কাজ করে:",
+    step1: '"নতুন সেশন তৈরি করুন" ক্লিক করে নতুন স্বাস্থ্য পরামর্শ শুরু করুন',
+    step2:
+      "আপনার পছন্দের ভাষায় আপনার ভয়েস রেকর্ড করে আপনার লক্ষণগুলি বর্ণনা করুন",
+    step3:
+      "তাৎক্ষণিক বিশ্লেষণ, ঘরোয়া প্রতিকার এবং কাছাকাছি ডাক্তারের সুপারিশ পান",
+    loginToCreate: "সেশন তৈরি করতে অনুগ্রহ করে লগ ইন করুন",
+    requestTimeout:
+      "অনুরোধের সময় শেষ হয়ে গেছে। অনুগ্রহ করে আপনার সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+    serverError: "সার্ভার ত্রুটি। অনুগ্রহ করে একটু পরে আবার চেষ্টা করুন।",
+    sessionFailed:
+      "সেশন তৈরি করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+  },
 };
 
 // Marathi translations (मराठी)
@@ -727,6 +875,30 @@ export const mr: Translations = {
     healthHelpline: "102 - आरोग्य हेल्पलाइन",
     copyright:
       "© 2026 आरोग्य साथी. सर्व हक्क राखीव. ग्रामीण भारतासाठी ❤️ सह तयार केले.",
+  },
+  sidebar: {
+    ruralHealth: "ग्रामीण आरोग्य",
+    needHelp: "मदत हवी आहे?",
+    contactSupport: "मदतीसाठी आमच्या समर्थन टीमशी संपर्क साधा",
+    getSupport: "समर्थन मिळवा",
+  },
+  chatPage: {
+    healthAssistant: "आरोग्य सहाय्यक",
+    startConversation:
+      "वैयक्तिक आरोग्य सल्ला, घरगुती उपाय आणि डॉक्टरांच्या शिफारसी मिळवण्यासाठी नवीन संभाषण सुरू करा.",
+    createNewSession: "नवीन सत्र तयार करा",
+    creatingSession: "सत्र तयार करत आहे...",
+    howItWorks: "हे कसे कार्य करते:",
+    step1: '"नवीन सत्र तयार करा" वर क्लिक करून नवीन आरोग्य सल्लामसलत सुरू करा',
+    step2:
+      "तुमच्या पसंतीच्या भाषेत तुमचा आवाज रेकॉर्ड करून तुमच्या लक्षणांचे वर्णन करा",
+    step3:
+      "त्वरित विश्लेषण, घरगुती उपाय आणि जवळच्या डॉक्टरांच्या शिफारसी मिळवा",
+    loginToCreate: "सत्र तयार करण्यासाठी कृपया लॉग इन करा",
+    requestTimeout:
+      "विनंती कालबाह्य झाली. कृपया तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
+    serverError: "सर्व्हर त्रुटी. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा.",
+    sessionFailed: "सत्र तयार करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
   },
 };
 

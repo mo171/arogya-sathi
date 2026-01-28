@@ -9,15 +9,17 @@ import Sidebar from "@/components/Sidebar";
 import { api } from "@/lib/axios";
 import { useUser } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function ChatLandingPage() {
   const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
   const { user, loading } = useUser();
+  const { t } = useTranslation();
 
   const handleCreateSession = async () => {
     if (!user) {
-      toast.error("Please log in to create a session");
+      toast.error(t.chatPage.loginToCreate);
       return;
     }
 
@@ -39,13 +41,13 @@ export default function ChatLandingPage() {
       }
     } catch (error: any) {
       console.error("Error creating session:", error);
-      
-      if (error.code === 'ECONNABORTED') {
-        toast.error("Request timed out. Please check your connection and try again.");
+
+      if (error.code === "ECONNABORTED") {
+        toast.error(t.chatPage.requestTimeout);
       } else if (error.response?.status === 500) {
-        toast.error("Server error. Please try again in a moment.");
+        toast.error(t.chatPage.serverError);
       } else {
-        toast.error("Failed to create session. Please try again.");
+        toast.error(t.chatPage.sessionFailed);
       }
     } finally {
       setIsCreating(false);
@@ -75,11 +77,10 @@ export default function ChatLandingPage() {
               <MessageSquare className="h-10 w-10 text-primary" />
             </div>
             <CardTitle className="text-3xl font-bold text-gray-900">
-              Health Assistant
+              {t.chatPage.healthAssistant}
             </CardTitle>
             <p className="text-gray-600 text-lg">
-              Start a new conversation to get personalized health advice, home
-              remedies, and doctor recommendations.
+              {t.chatPage.startConversation}
             </p>
           </CardHeader>
 
@@ -93,41 +94,32 @@ export default function ChatLandingPage() {
               {isCreating ? (
                 <>
                   <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Creating Session...
+                  {t.chatPage.creatingSession}
                 </>
               ) : (
                 <>
                   <Plus className="h-5 w-5 mr-2" />
-                  Create New Session
+                  {t.chatPage.createNewSession}
                 </>
               )}
             </Button>
 
             <div className="pt-6 border-t">
               <h3 className="font-semibold text-gray-900 mb-3">
-                How it works:
+                {t.chatPage.howItWorks}
               </h3>
               <ol className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary">1.</span>
-                  <span>
-                    Click &quot;Create New Session&quot; to start a new health
-                    consultation
-                  </span>
+                  <span>{t.chatPage.step1}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary">2.</span>
-                  <span>
-                    Describe your symptoms by recording your voice in your
-                    preferred language
-                  </span>
+                  <span>{t.chatPage.step2}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-primary">3.</span>
-                  <span>
-                    Get instant analysis, home remedies, and nearby doctor
-                    recommendations
-                  </span>
+                  <span>{t.chatPage.step3}</span>
                 </li>
               </ol>
             </div>
