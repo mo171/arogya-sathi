@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { useUser } from "@/context/AuthContext";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
-import { languageNames } from "@/lib/i18n/translations";
+import { languageNames, Language } from "@/lib/i18n/translations";
 
 interface MobileNavbarProps {
   showNavItems?: boolean;
